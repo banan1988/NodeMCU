@@ -32,4 +32,7 @@ Select from menu: File/Examples
 
 ## Before you start play with ESPx
 https://raw.githubusercontent.com/nodemcu/nodemcu-devkit-v1.0/master/Documents/NODEMCU_DEVKIT_V1.0_PINMAP.png
-If your program need PIN's number from GPIO you can use defined const values like D1, D2 etc. (Library for EPSx has already defined map for it)
+If your program need PIN's number from GPIO you can use defined const values like D1, D2 etc. (Library for EPSx has already defined map for it).
+
+## How to test printing from your program via Putty ?
+https://github.com/banan1988/NodeMCU/blob/master/putty.png
