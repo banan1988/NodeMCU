@@ -36,3 +36,7 @@ If your program need PIN's number from GPIO you can use defined const values lik
 
 ## How to test printing from your program via Putty ?
 https://github.com/banan1988/NodeMCU/blob/master/putty.png
+
+## PlatformIO IDE for vscode
+https://platformio.org/install/ide?install=vscode
+https://docs.platformio.org/en/latest/ide/vscode.html#quick-start
