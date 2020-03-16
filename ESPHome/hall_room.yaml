@@ -1,0 +1,73 @@
+substitutions:
+  device_name: hall_room
+  upper_device_name: Hall Room
+  topic_prefix: home/${device_name}
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # power_save_mode: light
+  
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.0.109
+    gateway: 192.168.0.1
+    subnet: 255.255.255.0
+
+# Enable logging
+logger:
+  level: VERBOSE
+
+# Enable Home Assistant API
+# api:
+
+# Enable OTA (Over The Air) update component
+ota:
+
+# deep_sleep:
+#   id: deep_sleep_mode
+#   run_duration: 1min
+#   sleep_duration: 1min
+
+mqtt:
+  broker: !secret mqtt_broker
+  discovery: False
+  topic_prefix: ${topic_prefix}
+  birth_message:
+    topic: ${topic_prefix}/status
+    payload: 1 # online
+  will_message:
+    topic: ${topic_prefix}/status
+    payload: 0 # offline
+  # on_message:
+  #   topic: hall_room/ota_mode
+  #   then:
+  #     - deep_sleep.prevent: deep_sleep_mode
+
+# LED
+# status_led:
+#   pin:
+#     number: D0
+#     inverted: True
+
+# I2C
+i2c:
+  sda: D2
+  scl: D1
+  scan: False
+
+# Sensors
+sensor:
+  - platform: dht12
+    temperature:
+      name: "DHT12 Temperature"
+      state_topic: ${topic_prefix}/sensor/temperature/dht12/state
+    humidity:
+      name: "DHT12 Humidity"
+      state_topic: ${topic_prefix}/sensor/humidity/dht12/state
+    update_interval: 30s

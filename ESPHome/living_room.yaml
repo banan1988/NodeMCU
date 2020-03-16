@@ -1,0 +1,77 @@
+substitutions:
+  device_name: living_room
+  upper_device_name: Living Room
+  topic_prefix: home/${device_name}
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # power_save_mode: light
+  
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.0.110
+    gateway: 192.168.0.1
+    subnet: 255.255.255.0
+
+# Enable logging
+logger:
+  level: VERBOSE
+
+# Enable Home Assistant API
+# api:
+
+# Enable OTA (Over The Air) update component
+ota:
+
+# deep_sleep:
+#   id: deep_sleep_mode
+#   run_duration: 1min
+#   sleep_duration: 1min
+
+mqtt:
+  broker: !secret mqtt_broker
+  discovery: False
+  topic_prefix: ${topic_prefix}
+  birth_message:
+    topic: ${topic_prefix}/status
+    payload: 1 # online
+  will_message:
+    topic: ${topic_prefix}/status
+    payload: 0 # offline
+  # on_message:
+  #   topic: living_room/ota_mode
+  #   then:
+  #     - deep_sleep.prevent: deep_sleep_mode
+
+# LED
+# status_led:
+#   pin:
+#     number: D0
+#     inverted: True
+
+# I2C
+i2c:
+  sda: D2
+  scl: D1
+  scan: False
+
+# Sensors
+sensor:
+  - platform: bme280
+    temperature:
+      name: "BME280 Temperature"
+      state_topic: ${topic_prefix}/sensor/temperature/bme280/state
+    pressure:
+      name: "BME280 Pressure"
+      state_topic: ${topic_prefix}/sensor/pressure/bme280/state
+    humidity:
+      name: "BME280 Humidity"
+      state_topic: ${topic_prefix}/sensor/humidity/bme280/state
+    address: 0x76
+    update_interval: 30s
