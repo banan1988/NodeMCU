@@ -2,6 +2,8 @@
 
 #include <DHT.h>
 
+#include <AM2320.h>
+
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
@@ -23,11 +25,15 @@
 
 #define ONEWIRE_PIN D1
 OneWire oneWire(ONEWIRE_PIN);
-DallasTemperature sensors(&oneWire);
+DallasTemperature dallasSensors(&oneWire);
 
-#define DHT_PIN D2
+#define DHT_PIN D5
 #define DHT_TYPE DHT::DHT11
 DHT dht;
+
+#define AM2320_SDA_PIN D6
+#define AM2320_SCL_PIN D7
+AM2320 am2320Sensor;
 
 Influxdb influx(INFLUXDB_HOST);
 
@@ -84,15 +90,25 @@ void initDallasSensors()
     unsigned long time = millis();
 
     Serial.println("init Dallas(ds18b20) sensors");
-    sensors.begin();
+    dallasSensors.begin();
+
+    elapsedTime(time);
+}
+
+void initAM2320()
+{
+    unsigned long time = millis();
+
+    Serial.println("init AM2320 sensor");
+    am2320Sensor.begin(AM2320_SDA_PIN, AM2320_SCL_PIN);
 
     elapsedTime(time);
 }
 
 InfluxData readTemperatureDs18b20()
 {
-    sensors.requestTemperatures();
-    float temperature = sensors.getTempCByIndex(0);
+    dallasSensors.requestTemperatures();
+    float temperature = dallasSensors.getTempCByIndex(0);
 
     Serial.println("readTemperatureDs18b20: " + String(temperature));
 
@@ -135,6 +151,38 @@ InfluxData readHumidityDHT11()
     return measurement;
 }
 
+InfluxData readTemperatureAM2320()
+{
+    am2320Sensor.measure();
+    float temperature = am2320Sensor.getTemperature();
+
+    Serial.println("readTemperatureAM2320: " + String(temperature));
+
+    // create a measurement object
+    InfluxData measurement("temperature");
+    measurement.addTag("device", ARDUINO_BOARD);
+    measurement.addTag("sensor", "am2320");
+    measurement.addValue("value", temperature);
+
+    return measurement;
+}
+
+InfluxData readHumidityAM2320()
+{
+    am2320Sensor.measure();
+    float humidity = am2320Sensor.getHumidity();
+
+    Serial.println("readHumidityAM2320: " + String(humidity));
+
+    // create a measurement object
+    InfluxData measurement("humidity");
+    measurement.addTag("device", ARDUINO_BOARD);
+    measurement.addTag("sensor", "am2320");
+    measurement.addValue("value", humidity);
+
+    return measurement;
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -149,6 +197,7 @@ void setup()
     // Sensors
     initDTH11();
     initDallasSensors();
+    initAM2320();
 }
 
 void loop()
@@ -158,9 +207,12 @@ void loop()
     influx.prepare(readTemperatureDHT11());
     influx.prepare(readHumidityDHT11());
 
+    // influx.prepare(readTemperatureAM2320());
+    // influx.prepare(readHumidityAM2320());
+
     influx.write();
 
     Serial.println("I'm going into deep sleep mode for 60 seconds");
-    // delay(6000);
-    ESP.deepSleep(60e6); 
+    delay(6000);
+    // ESP.deepSleep(60e6);
 }

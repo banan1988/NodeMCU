@@ -40,3 +40,8 @@ https://github.com/banan1988/NodeMCU/blob/master/putty.png
 ## PlatformIO IDE for vscode
 https://platformio.org/install/ide?install=vscode
 https://docs.platformio.org/en/latest/ide/vscode.html#quick-start
+
+https://github.com/esp8266/Arduino/tree/master/doc/esp8266wifi
+http://esp8266.github.io/Arduino/versions/2.0.0-rc2/doc/libraries.html
+https://majsterkowo.pl/tani-bezprzewodowy-programator-avr-esp8266-wifi/
+https://www.cron.dk/esp8266-on-batteries-for-years-part-1/
